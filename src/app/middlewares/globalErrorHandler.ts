@@ -9,7 +9,6 @@ import handleClientError from '../../errors/handleClientError';
 import handleValidationError from '../../errors/handleValidationError';
 import handleZodError from '../../errors/handleZodError';
 import { IGenericErrorMessage } from '../../interface/error';
-import { errorLogger } from '../../shared/logger';
 
 const globalErrorHandler: ErrorRequestHandler = (
     error,
@@ -17,7 +16,8 @@ const globalErrorHandler: ErrorRequestHandler = (
     res: Response,
     next: NextFunction,
 ) => {
-    errorLogger.error(`🐱‍🏍 globalErrorHandler ~~`, error);
+    //eslint-disable-next-line
+    console.log(`🐱‍🏍 globalErrorHandler ~~`, error);
 
     let statusCode = 500;
     let message = 'Something went wrong !';

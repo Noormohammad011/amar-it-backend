@@ -12,13 +12,13 @@ const myFormat = printf(({ level, message, label, timestamp }) => {
 
 const logger = createLogger({
     level: 'info',
-    format: combine(label({ label: 'AMAR_IT' }), timestamp(), myFormat),
+    format: combine(label({ label: 'SOPNO_IT' }), timestamp(), myFormat),
     transports: [new transports.Console()],
 });
 
 const errorLogger = createLogger({
     level: 'error',
-    format: combine(label({ label: 'AMAR_IT' }), timestamp(), myFormat),
+    format: combine(label({ label: 'SOPNO_IT' }), timestamp(), myFormat),
     transports: [new transports.Console()],
 });
 

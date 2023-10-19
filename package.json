@@ -1,5 +1,5 @@
 {
-    "name": "amar-it-backend",
+    "name": "sopno-it-backend",
     "version": "1.0.0",
     "description": "A backend application for an internet service provider company",
     "main": "index.js",
@@ -16,7 +16,7 @@
         "src/**/*.ts": "yarn lint-prettier"
     },
     "keywords": [],
-    "author": "Kamrul Saad",
+    "author": "Noor Mohammad",
     "license": "ISC",
     "devDependencies": {
         "@types/bcrypt": "^5.0.0",
