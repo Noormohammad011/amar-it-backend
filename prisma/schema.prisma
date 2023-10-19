@@ -1,0 +1,214 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  username  String    @id @unique
+  password  String
+  role      USER_ROLE
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  customer  Customer?
+  admin     Admin?
+
+  @@map("users")
+}
+
+model Customer {
+  id            String         @id @default(uuid())
+  firstName     String
+  middleName    String?
+  lastName      String
+  email         String
+  contactNo     String
+  address       String
+  profileImage  String?
+  username      String         @unique
+  user          User           @relation(fields: [username], references: [username])
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  payments      Payment[]
+  bookings      Booking[]
+  feedbacks     Feedback[]
+  notifications Notification[]
+
+  @@map("customers")
+}
+
+model Admin {
+  id           String     @id @default(uuid())
+  firstName    String
+  middleName   String?
+  lastName     String
+  email        String
+  contactNo    String
+  address      String
+  profileImage String?
+  username     String     @unique
+  user         User       @relation(fields: [username], references: [username])
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@map("admins")
+}
+
+model Permission {
+  id    String @id @default(uuid())
+  title String
+
+  admins Admin[]
+
+  @@map("permissions")
+}
+
+model Package {
+  id        String     @id @default(uuid())
+  title     String
+  bandwidth String
+  features  String[]
+  charge    Float
+  serviceId String
+  service   Service    @relation(fields: [serviceId], references: [id])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  bookings  Booking[]
+  feedbacks Feedback[]
+
+  @@map("packages")
+}
+
+model Service {
+  id          String        @id @default(uuid())
+  title       String
+  description String
+  features    String[]
+  charge      Float
+  status      ServiceStatus @default(active)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  packages    Package[]
+
+  @@map("services")
+}
+
+model Payment {
+  id         String   @id @default(uuid())
+  amount     Float
+  reason     String?
+  status     Status
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("payments")
+}
+
+model Booking {
+  id         String   @id @default(uuid())
+  startTime  String
+  endTime    String
+  status     Status
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  packageId  String
+  package    Package  @relation(fields: [packageId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("bookings")
+}
+
+model Feedback {
+  id         String   @id @default(uuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  packageId  String
+  package    Package  @relation(fields: [packageId], references: [id])
+  message    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("feedbacks")
+}
+
+model Notification {
+  id         String   @id @default(uuid())
+  title      String
+  message    String
+  read       Boolean  @default(false)
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("notifications")
+}
+
+model BlogCategory {
+  id        String   @id @default(uuid())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  blogs     Blog[]
+
+  @@map("blog_categories")
+}
+
+model Blog {
+  id             String       @id @default(uuid())
+  title          String
+  content        String
+  image          String
+  blogCategoryId String
+  blogCategory   BlogCategory @relation(fields: [blogCategoryId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("blogs")
+}
+
+model HomeBannerContents {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  image     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("home_banner_contents")
+}
+
+model FAQ {
+  id        String   @id @default(uuid())
+  question  String
+  answer    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("faqs")
+}
+
+enum USER_ROLE {
+  super_admin
+  admin
+  customer
+}
+
+enum Status {
+  pending
+  confirmed
+  cancelled
+}
+
+enum ServiceStatus {
+  active
+  upcoming
+}
