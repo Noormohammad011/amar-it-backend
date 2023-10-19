@@ -9,6 +9,9 @@ import { PackageRoutes } from '../modules/package/package.routes';
 import { HomeBannerContentsRoute } from '../modules/home-banner/home-banner.routes';
 import { ServiceRoutes } from '../modules/service/service.routes';
 import { PermissionRoutes } from '../modules/permission/permission.routes';
+import { BookingRoutes } from '../modules/booking/booking.routes';
+import { FeedbackRoute } from '../modules/feedback/feedback.routes';
+import { CustomerRoutes } from '../modules/customer/customer.routes';
 
 const router = express.Router();
 
@@ -53,6 +56,21 @@ const moduleroutes = [
     {
         path: '/permissions',
         route: PermissionRoutes,
+    },
+
+    //customer routes--> handled by admin
+    {
+        path: '/booking',
+        route: BookingRoutes,
+    },
+    //customer routes--> handled delete by superadmin
+    {
+        path: '/feedback',
+        route: FeedbackRoute,
+    },
+    {
+        path: '/customers',
+        route: CustomerRoutes,
     },
 ];
 
