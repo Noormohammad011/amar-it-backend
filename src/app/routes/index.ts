@@ -5,6 +5,10 @@ import { AdminRoutes } from '../modules/admin/admin.routes';
 import { FaqRoute } from '../modules/faq/faq.routes';
 import { BlogCategoryRoute } from '../modules/blog-category/blog-category.routes';
 import { BlogsRoute } from '../modules/blogs/blogs.routes';
+import { PackageRoutes } from '../modules/package/package.routes';
+import { HomeBannerContentsRoute } from '../modules/home-banner/home-banner.routes';
+import { ServiceRoutes } from '../modules/service/service.routes';
+import { PermissionRoutes } from '../modules/permission/permission.routes';
 
 const router = express.Router();
 
@@ -32,6 +36,23 @@ const moduleroutes = [
     {
         path: '/blogs',
         route: BlogsRoute,
+    },
+    {
+        path: '/packages',
+        route: PackageRoutes,
+    },
+    {
+        path: '/home-banner',
+        route: HomeBannerContentsRoute,
+    },
+    {
+        path: '/services',
+        route: ServiceRoutes,
+    },
+    //super admin routes
+    {
+        path: '/permissions',
+        route: PermissionRoutes,
     },
 ];
 
