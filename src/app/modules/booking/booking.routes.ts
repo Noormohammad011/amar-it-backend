@@ -15,7 +15,7 @@ router.post(
 
 router.get(
     '/',
-    auth(USER_ROLE.admin),
+    auth(USER_ROLE.admin, USER_ROLE.super_admin),
     BookingController.getAllFromDB,
 );
 
@@ -23,12 +23,12 @@ router
     .route('/:id')
     .get(BookingController.getSingleFromDB)
     .patch(
-        auth(USER_ROLE.admin),
+        auth(USER_ROLE.admin, USER_ROLE.super_admin),
         validateRequest(BookingValidation.update),
         BookingController.updateInDB,
     )
     .delete(
-        auth(USER_ROLE.admin),
+        auth(USER_ROLE.admin, USER_ROLE.super_admin),
         BookingController.deleteFromDB,
     );
 

@@ -10,7 +10,7 @@ router.get('/', PackageController.getAllFromDB);
 
 router.post(
     '/',
-    auth(USER_ROLE.admin),
+    auth(USER_ROLE.admin, USER_ROLE.super_admin),
     validateRequest(PackageValidation.create),
     PackageController.insertIntoDB,
 );
@@ -19,12 +19,12 @@ router
     .route('/:id')
     .get(PackageController.getOneFromDB)
     .patch(
-        auth(USER_ROLE.admin),
+        auth(USER_ROLE.admin, USER_ROLE.super_admin),
         validateRequest(PackageValidation.update),
         PackageController.updateOneInDB,
     )
     .delete(
-        auth(USER_ROLE.admin),
+        auth(USER_ROLE.admin, USER_ROLE.super_admin),
         PackageController.deleteOneFromDB,
     );
 

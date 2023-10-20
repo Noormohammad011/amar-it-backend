@@ -5,7 +5,7 @@ import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import httpStatus from 'http-status';
 import routes from './app/routes';
 import config from './config';
-
+import fileUpload from 'express-fileupload';
 const app: Application = express();
 
 // Middlewares
@@ -16,6 +16,13 @@ app.use(
     }),
 );
 app.use(cookieParser());
+//file upload
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: '/uploads/',
+  })
+)
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

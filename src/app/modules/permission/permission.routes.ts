@@ -12,21 +12,21 @@ router.get('/:id', PermissionController.getSingleFromDB);
 
 router.post(
     '/',
-    auth(USER_ROLE.super_admin),
+    auth(USER_ROLE.super_admin, USER_ROLE.admin),
     validateRequest(PermissionValidation.create),
     PermissionController.insertIntoDB,
 );
 
 router.patch(
     '/:id',
-    auth(USER_ROLE.super_admin),
+    auth(USER_ROLE.super_admin, USER_ROLE.admin),
     validateRequest(PermissionValidation.update),
     PermissionController.updateOneInDB,
 );
 
 router.delete(
     '/:id',
-    auth(USER_ROLE.super_admin),
+    auth(USER_ROLE.super_admin, USER_ROLE.admin),
     PermissionController.deleteOneFromDB,
 );
 
