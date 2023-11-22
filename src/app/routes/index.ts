@@ -1,32 +1,35 @@
 import express from 'express';
-import { AuthRoutes } from '../modules/auth/auth.routes';
-import { UserRoutes } from '../modules/user/user.routes';
 import { AdminRoutes } from '../modules/admin/admin.routes';
-import { FaqRoute } from '../modules/faq/faq.routes';
+import { AuthRoutes } from '../modules/auth/auth.routes';
 import { BlogCategoryRoute } from '../modules/blog-category/blog-category.routes';
 import { BlogsRoute } from '../modules/blogs/blogs.routes';
-import { PackageRoutes } from '../modules/package/package.routes';
-import { HomeBannerContentsRoute } from '../modules/home-banner/home-banner.routes';
-import { ServiceRoutes } from '../modules/service/service.routes';
-import { PermissionRoutes } from '../modules/permission/permission.routes';
 import { BookingRoutes } from '../modules/booking/booking.routes';
-import { FeedbackRoute } from '../modules/feedback/feedback.routes';
 import { CustomerRoutes } from '../modules/customer/customer.routes';
+import { FaqRoute } from '../modules/faq/faq.routes';
+import { HomeBannerContentsRoute } from '../modules/home-banner/home-banner.routes';
+import { PermissionRoutes } from '../modules/permission/permission.routes';
+import { UserRoutes } from '../modules/user/user.routes';
+import { ServiceRoutes } from '../modules/service/service.routes';
+import { PaymentRoutes } from '../modules/payment/payment.routes';
 
 const router = express.Router();
 
 const moduleroutes = [
     {
-        path: '/auth',
-        route: AuthRoutes,
-    },
-    {
         path: '/users',
         route: UserRoutes,
     },
     {
+        path: '/auth',
+        route: AuthRoutes,
+    },
+    {
         path: '/admins',
         route: AdminRoutes,
+    },
+    {
+        path: '/permissions',
+        route: PermissionRoutes,
     },
     {
         path: '/faq',
@@ -41,36 +44,24 @@ const moduleroutes = [
         route: BlogsRoute,
     },
     {
-        path: '/packages',
-        route: PackageRoutes,
+        path: '/customers',
+        route: CustomerRoutes,
     },
     {
         path: '/home-banner',
         route: HomeBannerContentsRoute,
     },
     {
-        path: '/services',
-        route: ServiceRoutes,
-    },
-    //super admin routes
-    {
-        path: '/permissions',
-        route: PermissionRoutes,
-    },
-
-    //customer routes--> handled by admin
-    {
         path: '/booking',
         route: BookingRoutes,
     },
-    //customer routes--> handled delete by superadmin
     {
-        path: '/feedback',
-        route: FeedbackRoute,
+        path: '/services',
+        route: ServiceRoutes,
     },
     {
-        path: '/customers',
-        route: CustomerRoutes,
+        path: '/payment',
+        route: PaymentRoutes,
     },
 ];
 
