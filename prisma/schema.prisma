@@ -20,22 +20,22 @@ model User {
 }
 
 model Customer {
-  id            String         @id @default(uuid())
-  firstName     String
-  middleName    String?
-  lastName      String
-  email         String
-  contactNo     String
-  address       String
-  profileImage  String?
-  username      String         @unique
-  user          User           @relation(fields: [username], references: [username])
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  payments      Payment[]
-  bookings      Booking[]
-  feedbacks     Feedback[]
-  notifications Notification[]
+  id           String     @id @default(uuid())
+  firstName    String?
+  middleName   String?
+  lastName     String?
+  email        String?
+  contactNo    String?
+  address      String?
+  profileImage String?
+  username     String     @unique
+  user         User       @relation(fields: [username], references: [username])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  bookings     Booking[]
+  feedbacks    Feedback[]
+  Ticket       Ticket[]
+  Payments     Payments[]
 
   @@map("customers")
 }
@@ -68,22 +68,6 @@ model Permission {
   @@map("permissions")
 }
 
-model Package {
-  id        String     @id @default(uuid())
-  title     String
-  bandwidth String
-  features  String[]
-  charge    Float
-  serviceId String
-  service   Service    @relation(fields: [serviceId], references: [id])
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  bookings  Booking[]
-  feedbacks Feedback[]
-
-  @@map("packages")
-}
-
 model Service {
   id          String        @id @default(uuid())
   title       String
@@ -93,33 +77,22 @@ model Service {
   status      ServiceStatus @default(active)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  packages    Package[]
+  bookings    Booking[]
+  Feedback    Feedback[]
 
   @@map("services")
-}
-
-model Payment {
-  id         String   @id @default(uuid())
-  amount     Float
-  reason     String?
-  status     Status
-  customerId String
-  customer   Customer @relation(fields: [customerId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@map("payments")
 }
 
 model Booking {
   id         String   @id @default(uuid())
   startTime  String
   endTime    String
-  status     Status
+  date       DateTime
+  status     Status   @default(pending)
   customerId String
   customer   Customer @relation(fields: [customerId], references: [id])
-  packageId  String
-  package    Package  @relation(fields: [packageId], references: [id])
+  serviceId  String
+  service    Service  @relation(fields: [serviceId], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -130,8 +103,8 @@ model Feedback {
   id         String   @id @default(uuid())
   customerId String
   customer   Customer @relation(fields: [customerId], references: [id])
-  packageId  String
-  package    Package  @relation(fields: [packageId], references: [id])
+  serviceId  String
+  service    Service  @relation(fields: [serviceId], references: [id])
   message    String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -139,17 +112,17 @@ model Feedback {
   @@map("feedbacks")
 }
 
-model Notification {
-  id         String   @id @default(uuid())
-  title      String
-  message    String
-  read       Boolean  @default(false)
+model Ticket {
+  id         String       @id @default(uuid())
   customerId String
-  customer   Customer @relation(fields: [customerId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  customer   Customer     @relation(fields: [customerId], references: [id])
+  message    String
+  reply      String?
+  status     TicketStatus @default(pending)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
 
-  @@map("notifications")
+  @@map("tickets")
 }
 
 model BlogCategory {
@@ -196,6 +169,19 @@ model FAQ {
   @@map("faqs")
 }
 
+model Payments {
+  id         String   @id @default(uuid())
+  customerId String
+  paymentID  String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  isPaid     Boolean
+  totalPrice Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("payments")
+}
+
 enum USER_ROLE {
   super_admin
   admin
@@ -204,8 +190,14 @@ enum USER_ROLE {
 
 enum Status {
   pending
-  confirmed
+  completed
   cancelled
+}
+
+enum TicketStatus {
+  pending
+  resolved
+  closed
 }
 
 enum ServiceStatus {
