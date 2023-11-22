@@ -1,4 +1,4 @@
-import { Customer } from '@prisma/client';
+import { User } from '@prisma/client';
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
 import { JwtPayload } from 'jsonwebtoken';
@@ -8,12 +8,10 @@ import { ILoginUserResponse, IRefreshTokenResponse } from './auth.interface';
 import { AuthService } from './auth.service';
 
 const signUp = catchAsync(async (req: Request, res: Response) => {
-    const { user, customer } = req.body;
+    const data = req.body;
 
-    // const file = req.file as IUploadFile;
-
-    const result = await AuthService.signUp(user, customer);
-    sendResponse<Customer>(res, {
+    const result = await AuthService.signUp(data);
+    sendResponse<User>(res, {
         statusCode: httpStatus.CREATED,
         success: true,
         message: 'Customer signed up successfully',
@@ -25,9 +23,7 @@ const login = catchAsync(async (req: Request, res: Response) => {
     const { ...loginData } = req.body;
 
     const result = await AuthService.login(loginData);
-    const { refreshToken, ...others } = result;
 
-    // set refresh token into cookie
     const cookieOptions: {
         secure: boolean;
         httpOnly: boolean;
@@ -42,7 +38,7 @@ const login = catchAsync(async (req: Request, res: Response) => {
     sendResponse<Partial<ILoginUserResponse>>(res, {
         statusCode: httpStatus.OK,
         message: 'User logged in successfully',
-        data: others,
+        data: { accessToken: result.accessToken },
         success: true,
     });
 });
@@ -52,7 +48,6 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
 
     const result = await AuthService.refreshToken(refreshToken);
 
-    // set refresh token into cookie
     const cookieOptions: {
         secure: boolean;
         httpOnly: boolean;
@@ -68,31 +63,6 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
         statusCode: httpStatus.OK,
         success: true,
         message: 'User logged in successfully!',
-        data: result,
-    });
-});
-
-const logout = catchAsync(async (req: Request, res: Response) => {
-    const { username } = req.user as { username: string };
-    const result = await AuthService.logout(username);
-
-    const cookieOptions: {
-        secure: boolean;
-        httpOnly: boolean;
-        sameSite?: 'none' | undefined;
-    } = {
-        secure: true,
-        httpOnly: true,
-        sameSite: 'none',
-    };
-
-    // Remove the refreshToken cookie from the response
-    res.clearCookie('refreshToken', cookieOptions);
-
-    sendResponse<IRefreshTokenResponse>(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'User logged out successfully!',
         data: result,
     });
 });
@@ -117,6 +87,5 @@ export const AuthController = {
     signUp,
     login,
     refreshToken,
-    logout,
     resetPassword,
 };

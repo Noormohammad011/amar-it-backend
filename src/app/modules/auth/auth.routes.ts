@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post(
     '/signup',
-    // FileUploadHelper.upload.single('file'),
+    validateRequest(AuthValidations.signUpSchema),
     AuthController.signUp,
 );
 
@@ -24,11 +24,6 @@ router.post(
     AuthController.refreshToken,
 );
 
-router.delete(
-    '/logout',
-    auth(USER_ROLE.super_admin, USER_ROLE.admin, USER_ROLE.customer),
-    AuthController.logout,
-);
 router.post(
     '/reset-password',
     auth(USER_ROLE.super_admin, USER_ROLE.admin, USER_ROLE.customer),

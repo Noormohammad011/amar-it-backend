@@ -1,4 +1,4 @@
-import { Customer, USER_ROLE, User } from '@prisma/client';
+import { USER_ROLE, User } from '@prisma/client';
 import httpStatus from 'http-status';
 import { Secret } from 'jsonwebtoken';
 import config from '../../../config';
@@ -12,10 +12,7 @@ import {
 } from './auth.interface';
 import { AuthUtils } from './auth.utils';
 
-const signUp = async (
-    user: User,
-    customer: Customer,
-): Promise<Customer> => {
+const signUp = async (user: User): Promise<User> => {
     const { password, ...rest } = user;
 
     const isUserNameExist = await AuthUtils.isUserExist(user.username);
@@ -27,7 +24,7 @@ const signUp = async (
     const result = await prisma.$transaction(async transactionClient => {
         const hashedPassword = await AuthUtils.hashPassword(password);
 
-        const createdUser = await transactionClient.user.create({
+        const result = await transactionClient.user.create({
             data: {
                 ...rest,
                 role: USER_ROLE.customer,
@@ -35,21 +32,13 @@ const signUp = async (
             },
         });
 
-        // const uploadedImage = await FileUploadHelper.uploadToCloudinary(file);
-        // if (!uploadedImage) {
-        //     throw new ApiError(httpStatus.BAD_REQUEST, 'Image upload failed');
-        // }
-
-        const result = await transactionClient.customer.create({
+        await transactionClient.customer.create({
             data: {
-                ...customer,
-                username: createdUser.username,
+                username: result.username,
             },
         });
 
         return result;
-    }, {
-        timeout: 10000,
     });
 
     return result;
@@ -81,7 +70,7 @@ const login = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
         );
     }
 
-    const accessToken = await JwtHelper.createToken(
+    const accessToken = JwtHelper.createToken(
         { username, role },
         config.jwt.secret as Secret,
         config.jwt.expires_in as string,
