@@ -41,9 +41,19 @@ const getAllFromDB = async (
 ): Promise<IGenericResponse<Booking[] | null>> => {
     const { limit, page, skip } =
         paginationHelpers.calculatePagination(options);
-    const { searchTerm, ...filterData } = filters;
+    const { searchTerm, username, ...filterData } = filters;
 
     const andConditions = [];
+
+    if (username) {
+        andConditions.push({
+            customer: {
+                username: {
+                    equals: username,
+                },
+            },
+        });
+    }
 
     if (searchTerm) {
         andConditions.push({
@@ -136,11 +146,21 @@ const updateInDB = async (
     id: string,
     payload: Booking,
 ): Promise<Booking | null> => {
+    const { date, ...data } = payload;
+
+    const updatedBookingData: Partial<Booking> = { ...data };
+
+    if (date) {
+        updatedBookingData.date = convertToIsoDate(
+            date as unknown as string,
+        ) as unknown as Date;
+    }
+
     const result = await prisma.booking.update({
         where: {
             id,
         },
-        data: payload,
+        data: updatedBookingData,
     });
     return result;
 };
